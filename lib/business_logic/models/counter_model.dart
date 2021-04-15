@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CounterModel {
-  int count = 0;
+  int count;
 
   CounterModel(this.count);
 

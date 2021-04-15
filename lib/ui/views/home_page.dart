@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                   Text(
-                    'Model Counter => ${model.m_counter.count}',
+                    'Model Counter => ${model.mCounter.count}',
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                 ],

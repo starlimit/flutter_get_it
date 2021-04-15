@@ -3,7 +3,7 @@ import 'package:flutter_get_it/business_logic/models/counter_model.dart';
 
 class CounterViewModel extends ChangeNotifier {
   CounterModel _modelCounter = CounterModel(0);
-  CounterModel get m_counter => this._modelCounter;
+  CounterModel get mCounter => this._modelCounter;
 
   int _counter = 0;
   int get counter => this._counter;
