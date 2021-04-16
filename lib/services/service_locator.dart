@@ -1,8 +1,11 @@
-import 'package:flutter_get_it/business_logic/view_models/counter_view_model.dart';
+import 'package:flutter_get_it/business_logic/view_models/product/product_list_vm.dart';
+import 'package:flutter_get_it/services/product_service.dart';
 import 'package:get_it/get_it.dart';
 
-var serviceLocator = GetIt.instance;
+GetIt serviceLocator = GetIt.instance;
 
 void serviceLocatorSetUp() {
-  serviceLocator.registerFactory<CounterViewModel>(() => CounterViewModel());
+  serviceLocator.registerLazySingleton<IProductService>(() => ProductService());
+
+  serviceLocator.registerFactory<ProductListVM>(() => ProductListVM());
 }
