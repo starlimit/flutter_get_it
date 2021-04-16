@@ -51,7 +51,7 @@ Describe your project
 
 ## :checkered_flag: Starting ##
 
-```bash
+```flutter 
 # Clone this project
 $ git clone https://github.com/starlimit/flutter_get_it
 
@@ -59,12 +59,12 @@ $ git clone https://github.com/starlimit/flutter_get_it
 $ cd flutter_get_it
 
 # Install dependencies
-$ yarn
+$ fultter clean
 
 # Run the project
 $ yarn start
 
-# The server will initialize in the <http://localhost:3000>
+
 ```
 
 ## :memo: License ##
