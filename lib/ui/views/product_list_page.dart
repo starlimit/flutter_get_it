@@ -35,17 +35,6 @@ class _ProductListPageState extends State<ProductListPage> {
                 title: Text('Title'),
               ),
               body: makeBody(),
-              // Container(
-              //   child: ListView.builder(
-              //     itemCount: model.productList.length,
-              //     itemBuilder: (BuildContext context, int index) {
-              //       return ListTile(
-              //         title: Text('${model.productList[index].title}'),
-              //         subtitle: Text('${model.productList[index].rating}'),
-              //       );
-              //     },
-              //   ),
-              // ),
               bottomNavigationBar: FFNavigationBar(
                 theme: FFNavigationBarTheme(
                   barBackgroundColor: Colors.white,
@@ -106,8 +95,8 @@ class _ProductListPageState extends State<ProductListPage> {
             ),
             child: Container(
               padding: EdgeInsets.all(5.0),
-              decoration: new BoxDecoration(
-                  border: new Border.all(color: Colors.grey[400])),
+              // decoration: new BoxDecoration(
+              //     border: new Border.all(color: Colors.grey[400])),
               width: 70.0,
               child: Image.network('${model.productList[index].image}'),
             )),
@@ -137,7 +126,7 @@ class _ProductListPageState extends State<ProductListPage> {
               direction: Axis.horizontal,
               allowHalfRating: true,
               itemCount: 5,
-              itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
+              itemPadding: EdgeInsets.symmetric(horizontal: 1),
               itemBuilder: (context, _) => Icon(
                 Icons.star,
                 color: Colors.amber,
