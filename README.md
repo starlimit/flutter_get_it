@@ -62,7 +62,7 @@ $ cd flutter_get_it
 $ fultter clean
 
 # Run the project
-$ yarn start
+$ flutter run
 
 
 ```
