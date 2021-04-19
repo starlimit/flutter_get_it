@@ -1,18 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_get_it/business_logic/view_models/cart/cart_list_vm.dart';
+import 'package:flutter_get_it/business_logic/view_models/product/product_list_vm.dart';
 import 'package:flutter_get_it/services/service_locator.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 import 'routes/routes.dart';
 
 void main() {
   serviceLocatorSetUp();
-  runApp(GetMaterialApp(
-    debugShowCheckedModeBanner: false,
-    initialRoute: Routes.PRODUCT_LIST,
-    theme: ThemeData(
-      primarySwatch: Colors.amberAccent[900],
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ProductListVM>(
+          create: (_) => ProductListVM(),
+        ),
+        ChangeNotifierProvider<CartListVM>(create: (_) => CartListVM())
+      ],
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: Routes.HOME,
+        theme: ThemeData(
+          primarySwatch: Colors.amberAccent[900],
+        ),
+        defaultTransition: Transition.leftToRight,
+        getPages: AppPages.pages,
+      ),
     ),
-    defaultTransition: Transition.leftToRight,
-    getPages: AppPages.pages,
-  ));
+  );
 }

@@ -1,111 +1,100 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_get_it/business_logic/models/product_model.dart';
 import 'package:flutter_get_it/business_logic/view_models/cart/cart_list_vm.dart';
 import 'package:flutter_get_it/business_logic/view_models/product/product_list_vm.dart';
 import 'package:flutter_get_it/services/service_locator.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:ff_navigation_bar/ff_navigation_bar.dart';
 
-class ProductListPage extends StatefulWidget {
-  ProductListPage({Key key}) : super(key: key);
+class ProductPage extends StatefulWidget {
+  ProductPage({Key key}) : super(key: key);
 
   @override
-  _ProductListPageState createState() => _ProductListPageState();
+  _ProductPageState createState() => _ProductPageState();
 }
 
-class _ProductListPageState extends State<ProductListPage> {
-  ProductListVM model = serviceLocator<ProductListVM>();
-  CartListVM model2 = serviceLocator<CartListVM>();
+class _ProductPageState extends State<ProductPage> {
+  ProductListVM model1 = serviceLocator<ProductListVM>();
+  //CartListVM cModel = serviceLocator<CartListVM>();
+  Future<List<ProductModel>> myProductsList;
+
+  Future<List<ProductModel>> getProductList(BuildContext context) async {
+    return Provider.of<ProductListVM>(context, listen: false).fetchProducts();
+  }
 
   @override
   void initState() {
-    model.fetchProducts();
+    myProductsList = model1.fetchProducts();
+    // myProductsList = getProductList(context);
     super.initState();
   }
 
-  static int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
+    // return Consumer(builder: (context, ProductListVM model, child) {
+    //   return SafeArea(child: makeBody());
+    // });
+
     return SafeArea(
-      child: ChangeNotifierProvider<ProductListVM>(
-        create: (context) => model,
-        child: Consumer<ProductListVM>(
-          builder: (context, model, child) {
-            return model.productList.length == 0
-                ? CircularProgressIndicator(
-                    backgroundColor: Colors.red,
-                  )
-                : Scaffold(
-                    appBar: AppBar(
-                      title: Text('Title'),
-                      actions: [
-                        Badge(
-                          position: BadgePosition.topEnd(top: 5, end: 5),
-                          badgeContent: Text('${model2.cartList?.length}'),
-                          child: IconButton(
-                              icon: Icon(Icons.shopping_cart),
-                              onPressed: () =>
-                                  {print('Going to shopping Cart')}),
-                        ),
-                        // IconButton(
-                        //     icon: Icon(Icons.shopping_cart),
-                        //     onPressed: () => {})
-                      ],
-                    ),
-                    body: makeBody(),
-                    bottomNavigationBar: FFNavigationBar(
-                      theme: FFNavigationBarTheme(
-                        barBackgroundColor: Colors.white,
-                        selectedItemBorderColor: Colors.transparent,
-                        selectedItemBackgroundColor: Colors.green,
-                        selectedItemIconColor: Colors.white,
-                        selectedItemLabelColor: Colors.black,
-                        showSelectedItemShadow: false,
-                        barHeight: 70,
-                      ),
-                      selectedIndex: selectedIndex,
-                      onSelectTab: (index) {
-                        setState(() {
-                          selectedIndex = index;
-                          Get.snackbar(
-                              'Unsupported!', 'Navigation not Implemented',
-                              backgroundColor: Colors.orange,
-                              snackPosition: SnackPosition.BOTTOM);
-                        });
-                      },
-                      items: [
-                        FFNavigationBarItem(
-                          iconData: Icons.list,
-                          label: 'Products',
-                        ),
-                        FFNavigationBarItem(
-                          iconData: Icons.shopping_basket,
-                          label: 'Cart',
-                          selectedBackgroundColor: Colors.orange,
-                        ),
-                        FFNavigationBarItem(
-                          iconData: Icons.account_balance,
-                          label: 'Orders',
-                          selectedBackgroundColor: Colors.purple,
-                        ),
-                        FFNavigationBarItem(
-                          iconData: Icons.account_box,
-                          label: 'Profile',
-                          selectedBackgroundColor: Colors.red,
-                        ),
-                      ],
-                    ),
-                  );
-            // return scaffold;
+      child: RefreshIndicator(
+        onRefresh: () => model1.fetchProducts(), // getProductList(context),
+        child: Center(
+          child: FutureBuilder(
+              future: myProductsList,
+              builder: (BuildContext ctx, AsyncSnapshot snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  print('ConnectionState.done');
+                  if (snapshot.hasData) {
+                    return makeBody(snapshot.data);
+                  } else {
+                    Get.snackbar('No Data', 'Request returned with no data');
+                    return makeBody([]);
+                  }
+                } else
+                  return CircularProgressIndicator();
+              }),
+        ),
+      ),
+    );
+
+    //SafeArea(child: makeBody() );
+  }
+
+  Widget makeBody(data) {
+    return Consumer<ProductListVM>(
+        builder: (context, ProductListVM model, child) {
+      return Container(
+        child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: data?.length,
+          itemBuilder: (BuildContext context, int index) {
+            return makeCard(index, data[index]);
           },
         ),
+      );
+    });
+  }
+
+  Widget makeCard(index, ProductModel item) {
+    return Card(
+      elevation: 8.0,
+      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      child: Container(
+        decoration: BoxDecoration(color: Colors.white30),
+        child: makeListTile(index, item),
       ),
     );
   }
 
-  Widget makeListTile(index) => ListTile(
+  Widget makeListTile(index, item) {
+    return Consumer<ProductListVM>(
+        builder: (context, ProductListVM model, child) {
+      final _item = item;
+      //model.productList[index];
+      return ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5.0),
         leading: Container(
             padding: EdgeInsets.only(right: 6.0),
@@ -119,10 +108,10 @@ class _ProductListPageState extends State<ProductListPage> {
               // decoration: new BoxDecoration(
               //     border: new Border.all(color: Colors.grey[400])),
               width: 70.0,
-              child: Image.network('${model.productList[index].image}'),
+              child: Image.network('${item.image}'),
             )),
         title: Text(
-          '${model.productList[index].title}',
+          '${item.title}',
           style: TextStyle(
               color: Colors.black, fontWeight: FontWeight.bold, fontSize: 12.0),
         ),
@@ -134,7 +123,7 @@ class _ProductListPageState extends State<ProductListPage> {
             Text('Price: ',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
             Text(
-              '\$${model.productList[index].price}',
+              '\$${item.price}',
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
@@ -142,7 +131,7 @@ class _ProductListPageState extends State<ProductListPage> {
             ),
             RatingBar.builder(
               itemSize: 10,
-              initialRating: model.productList[index].rating,
+              initialRating: item.rating,
               minRating: 1,
               direction: Axis.horizontal,
               allowHalfRating: true,
@@ -160,53 +149,36 @@ class _ProductListPageState extends State<ProductListPage> {
               shape: BadgeShape.square,
               badgeColor: Colors.black54,
               borderRadius: BorderRadius.circular(2),
-              badgeContent: Text('${model.productList[index].category}',
+              badgeContent: Text('${item.category}',
                   style: TextStyle(color: Colors.white, fontSize: 10)),
             ),
             IconButton(
                 padding: EdgeInsets.zero,
                 iconSize: 18,
-                color: model.productList[index].isFavorite
-                    ? Colors.pink
-                    : Colors.grey,
-                icon: model.productList[index].isFavorite
+                color: item.isFavorite ? Colors.pink : Colors.grey,
+                icon: item.isFavorite
                     ? Icon(Icons.favorite)
                     : Icon(Icons.favorite_border),
                 onPressed: () {
-                  model.addFavorite(index);
+                  // print('adding item to cart ${cModel.cartList?.length}');
+                  //cartVm.addToCart(item);
+                  model1.addFavorite(index);
                 }),
           ],
         ),
-        onTap: () => _show(context, index),
+        onTap: () => {_show(context, index, _item)},
 
         // Icon(Icons.keyboard_arrow_right, color: Colors.black, size: 30.0),
       );
+    });
+  }
 
-  Widget makeBody() => Container(
-        child: ListView.builder(
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: model.productList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return makeCard(index);
-          },
-        ),
-      );
-
-  Widget makeCard(index) => Card(
-        elevation: 8.0,
-        margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-        child: Container(
-          decoration: BoxDecoration(color: Colors.white30),
-          child: makeListTile(index),
-        ),
-      );
-
-  void _show(BuildContext ctx, int index) {
-    final _item = model.productList[index];
+  void _show(BuildContext ctx, int index, ProductModel _item) {
+    final cartVm = Provider.of<CartListVM>(context, listen: false);
+    final prodVm = Provider.of<ProductListVM>(context, listen: false);
     showModalBottomSheet(
         isScrollControlled: true,
-        elevation: 5,
+        elevation: 8,
         context: ctx,
         isDismissible: true,
         builder: (ctx) => Padding(
@@ -305,7 +277,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                                       : Icon(Icons
                                                           .favorite_border),
                                                   onPressed: () {
-                                                    model.addFavorite(index);
+                                                    prodVm.addFavorite(index);
                                                     print('Favourite Pressed');
                                                   }),
                                               SizedBox(
@@ -319,7 +291,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                                       Icon(Icons.shopping_cart),
                                                   onPressed: () {
                                                     Navigator.pop(context);
-                                                    model2.addToCart(_item);
+                                                    cartVm.addToCart(_item);
                                                   })
                                             ],
                                           )

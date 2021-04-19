@@ -14,14 +14,31 @@ class ProductListVM extends ChangeNotifier {
   List<ProductModel> _productList = [];
   get productList => this._productList;
 
-  Future<void> fetchProducts() async {
+  List<int> _favoriteList = [];
+  get favoriteList => this._favoriteList;
+
+  // List<int> _cartList = [];
+  // get cartList => this._cartList;
+
+  void addFavorite(int index) {
+    //find id in the list and toggle
+    _productList[index].isFavorite = !_productList[index].isFavorite;
+    print(_productList[index].isFavorite);
+    notifyListeners();
+  }
+
+  Future<List<ProductModel>> fetchProducts() async {
     try {
       var result = await serviceloc.fetchProducts();
+      //print(result.length);
       _productList = result == null ? [] : result;
+
       notifyListeners();
+      return result;
     } on Exception catch (e) {
       Get.snackbar('Error', e.toString());
       print(e.toString());
+      return null;
     }
 
     /// return listMyModel;

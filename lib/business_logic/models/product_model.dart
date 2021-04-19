@@ -6,8 +6,16 @@ class ProductModel {
   String image;
   double price;
   double rating;
+  bool isFavorite;
+  bool itemInCart;
 
-  ProductModel({id, title, category, description, image, price});
+  ProductModel(
+      {this.id,
+      this.title,
+      this.category,
+      this.description,
+      this.image,
+      this.price});
 
   ProductModel.fromJson(Map<String, dynamic> json) {
     this.id = json['id'];
@@ -17,6 +25,8 @@ class ProductModel {
     this.image = json['image'];
     this.price = json['price'].toDouble();
     this.rating = (json['id'] % 5).toDouble();
+    this.isFavorite = false;
+    this.itemInCart = false;
   }
 
   Map<String, dynamic> toJson() {

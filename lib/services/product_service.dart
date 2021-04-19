@@ -15,10 +15,10 @@ class ProductService implements IProductService {
 
   @override
   Future<List<ProductModel>> fetchProducts() async {
-    var queryParameters = {'limits': '20'};
+    var queryParameters = {'limits': '10'};
     try {
       final response =
-          await helper.get(Config.PRODUCTLIST_GET, queryParameters);
+          await helper.get(Config.PRODUCTLIST_GET); //, queryParameters);
 
       var listMyModel = List<ProductModel>.from(
           response.map((model) => ProductModel.fromJson(model)));
