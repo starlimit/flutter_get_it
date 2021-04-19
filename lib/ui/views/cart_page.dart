@@ -16,98 +16,98 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     final cartVm = Provider.of<CartListVM>(context, listen: true);
-    final TextEditingController tCtrl = TextEditingController(text: '4');
     return Container(
       child: cartVm.cartList == null
           ? Center(child: CircularProgressIndicator())
-          : ListView.separated(
-              separatorBuilder: (context, index) => Divider(
-                height: 1,
-              ),
+          : ListView.builder(
               itemCount: cartVm.cartList.length,
               itemBuilder: (context, index) {
                 final CartModel _item = cartVm.cartList[index];
                 final double sWidth = Get.width;
                 return Card(
-                  margin: EdgeInsets.all(5),
-
-                  color: Colors.white,
                   elevation: 8,
-                  //margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                  child: ListTile(
-                    leading: Container(
-
-                        // padding: EdgeInsets.all(4),
-                        width: sWidth * 0.20,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            // InkWell(
-                            //     child: Container(
-                            //       child: const Icon(
-                            //         Icons.delete_forever,
-                            //         color: Colors.red,
-                            //         size: 25.0,
-                            //       ),
-                            //     ),
-                            //     onTap: () {
-                            //       //Navigator.of(context).pop();
-                            //     }),
-                            IconButton(
-                                padding: EdgeInsets.zero,
-                                color: Colors.red[400],
-                                constraints: BoxConstraints(maxWidth: 25),
-                                icon: Icon(Icons.delete_forever),
-                                onPressed: () {
-                                  cartVm.removeItemFromCart(_item);
-                                }),
-                            Image.network(_item.product.image),
-                          ],
-                        )),
-                    onTap: () {},
-                    title: Align(
-                      widthFactor: 1,
-                      alignment: Alignment.centerLeft,
-                      //  width: sWidth * 0.55,
-                      child: Text(
-                        '${_item.product.title}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold),
+                  child: Dismissible(
+                    onDismissed: (direction) {
+                      cartVm.removeItemFromCart(_item);
+                    },
+                    direction: DismissDirection.horizontal,
+                    background: Container(
+                      color: Colors.red,
+                      child: Align(
+                        alignment: Alignment(-0.9, 0),
+                        child: Icon(Icons.delete_forever, color: Colors.white),
                       ),
                     ),
-                    subtitle: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        IconButton(
-                            icon: Icon(Icons.add),
-                            onPressed: () {
-                              cartVm.increaseQty(_item);
-                            }),
-                        Text('${_item.quantity}'),
-                        IconButton(
-                            icon: Icon(Icons.remove),
-                            onPressed: () {
-                              cartVm.decreaseQty(_item);
-                            }),
-                      ],
+                    secondaryBackground: Container(
+                      color: Colors.red,
+                      child: Align(
+                        alignment: Alignment(0.9, 0),
+                        child: Icon(Icons.delete, color: Colors.white),
+                      ),
                     ),
-                    trailing: Container(
-                        width: sWidth * 0.12,
+                    key: UniqueKey(),
+                    child: ListTile(
+                      leading: Container(
+
+                          // padding: EdgeInsets.all(4),
+                          width: sWidth * 0.20,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  color: Colors.red[400],
+                                  constraints: BoxConstraints(maxWidth: 25),
+                                  icon: Icon(Icons.delete_forever),
+                                  onPressed: () {
+                                    cartVm.removeItemFromCart(_item);
+                                  }),
+                              Image.network(_item.product.image),
+                            ],
+                          )),
+                      onTap: () {},
+                      title: Align(
+                        widthFactor: 1,
+                        alignment: Alignment.centerLeft,
+                        //  width: sWidth * 0.55,
                         child: Text(
-                          '\$${_item.quantity * _item.product.price}',
+                          '${_item.product.title}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              color: Colors.green.shade800,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 15),
-                        )),
+                              fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      subtitle: Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          IconButton(
+                              icon: Icon(Icons.add),
+                              onPressed: () {
+                                cartVm.increaseQty(_item);
+                              }),
+                          Text('${_item.quantity}'),
+                          IconButton(
+                              icon: Icon(Icons.remove),
+                              onPressed: () {
+                                cartVm.decreaseQty(_item);
+                              }),
+                        ],
+                      ),
+                      trailing: Container(
+                          width: sWidth * 0.12,
+                          child: Text(
+                            '\$${_item.quantity * _item.product.price}',
+                            style: TextStyle(
+                                color: Colors.green.shade800,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 15),
+                          )),
+                    ),
                   ),
                 );
               },
             ),
-
-      // Text('${cartVm.cartList}')
     );
   }
 }
