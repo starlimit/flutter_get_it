@@ -8,6 +8,12 @@ class CartListVM extends ChangeNotifier {
   List<CartModel> _cartList = [];
   get cartList => this._cartList;
 
+  int _totalItems = 0;
+  get totalItems => this._totalItems;
+
+  double _totalCost = 0;
+  get totalCost => this._totalCost;
+
   void addToCart(ProductModel item) {
     if (productExist(item)) {
       //Get.snackbar('Info', 'Product already exist in cart');
@@ -17,23 +23,41 @@ class CartListVM extends ChangeNotifier {
     item.itemInCart = true;
     _cartList.add(new CartModel(id: uuid.v1(), product: item, quantity: 1));
     Get.snackbar('Info', 'Product added to Cart');
-    print(_cartList.length);
+    updateTotalItems();
     notifyListeners();
   }
 
   void increaseQty(CartModel item) {
     _cartList.firstWhere((element) => element.id == item.id).quantity++;
+    updateTotalItems();
     notifyListeners();
   }
 
   void decreaseQty(CartModel item) {
-    _cartList.firstWhere((element) => element.id == item.id).quantity--;
+    var qty =
+        _cartList.firstWhere((element) => element.id == item.id).quantity--;
+    print('==>${qty.toString()}');
+    if (qty == 1) removeItemFromCart(item);
+    updateTotalItems();
     notifyListeners();
   }
 
   void removeItemFromCart(CartModel item) {
     _cartList.removeWhere((element) => element.id == item.id);
+    updateTotalItems();
     notifyListeners();
+  }
+
+  void updateTotalItems() {
+    int _qty = 0;
+    double _cost = 0;
+
+    _cartList.forEach((element) {
+      _qty += element.quantity;
+      _cost += element.quantity * element.product.price;
+    });
+    _totalItems = _qty;
+    _totalCost = _cost.toPrecision(1);
   }
 
   bool productExist(ProductModel item) {

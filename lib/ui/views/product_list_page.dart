@@ -173,7 +173,7 @@ class _ProductListPageState extends State<ProductListPage> {
                     ? Icon(Icons.favorite)
                     : Icon(Icons.favorite_border),
                 onPressed: () {
-                  model.addFavorite(index);
+                  model.addFavorite(model.productList[index]);
                 }),
           ],
         ),
@@ -305,7 +305,7 @@ class _ProductListPageState extends State<ProductListPage> {
                                                       : Icon(Icons
                                                           .favorite_border),
                                                   onPressed: () {
-                                                    model.addFavorite(index);
+                                                    model.addFavorite(_item);
                                                     print('Favourite Pressed');
                                                   }),
                                               SizedBox(

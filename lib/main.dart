@@ -5,6 +5,7 @@ import 'package:flutter_get_it/services/service_locator.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
+import 'business_logic/models/product_model.dart';
 import 'routes/routes.dart';
 
 void main() {
@@ -13,9 +14,10 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<ProductListVM>(
-          create: (_) => ProductListVM(),
+        FutureProvider<List<ProductModel>>(
+          create: (_) => ProductListVM().fetchProducts(),
         ),
+        ChangeNotifierProvider<ProductListVM>(create: (_) => ProductListVM()),
         ChangeNotifierProvider<CartListVM>(create: (_) => CartListVM())
       ],
       child: GetMaterialApp(

@@ -9,6 +9,7 @@ class ProductListVM extends ChangeNotifier {
 
   ProductListVM() {
     print('Init in ProductListVM was called');
+    fetchProducts();
   }
 
   List<ProductModel> _productList = [];
@@ -20,18 +21,33 @@ class ProductListVM extends ChangeNotifier {
   // List<int> _cartList = [];
   // get cartList => this._cartList;
 
-  void addFavorite(int index) {
+  void addFavorite(ProductModel item) {
+    //print('item=>${_productList.length}');
     //find id in the list and toggle
-    _productList[index].isFavorite = !_productList[index].isFavorite;
-    print(_productList[index].isFavorite);
+    //
+    _productList.forEach((element) {
+      // print('element=>${element.id}');
+      if (element.id == item.id) {
+        print('before=>${element.isFavorite}');
+        element.isFavorite = !element.isFavorite;
+        print('after=>${element.isFavorite}');
+      }
+    });
+    //;
+    //  _productList[index].isFavorite = !_productList[index].isFavorite;
+
     notifyListeners();
   }
 
   Future<List<ProductModel>> fetchProducts() async {
+    List<ProductModel> result = [];
     try {
-      var result = await serviceloc.fetchProducts();
-      //print(result.length);
-      _productList = result == null ? [] : result;
+      if (_productList.isEmpty) {
+        result = await serviceloc.fetchProducts();
+        //print(result.length);
+        _productList = result == null ? [] : result;
+      } else
+        result = _productList;
 
       notifyListeners();
       return result;

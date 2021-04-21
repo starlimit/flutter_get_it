@@ -57,6 +57,8 @@ class _HomePageState extends State<HomePage> {
                 return Text('${model.cartList?.length}');
               }),
               child: IconButton(
+                  tooltip: 'Go to Cart',
+                  enableFeedback: true,
                   icon: Icon(Icons.shopping_cart),
                   onPressed: () {
                     setState(() {
